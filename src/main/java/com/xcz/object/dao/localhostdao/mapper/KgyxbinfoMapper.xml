@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+ 
+<mapper namespace="com.xcz.object.dao.localhostdao.KgyxbinfoDao">
+    <resultMap id="BaseResultMap" type="com.xcz.object.model.Kgyxbinfo">  
+        <result column="id" property="id"  jdbcType="INTEGER" />
+        <result column="type" property="type" />
+        <result column="name" property="name" />
+        <result column="num" property="num" />
+        <result column="description" property="description" />
+        <result column="model" property="model" />
+        <result column="price" property="price" />
+        <result column="state" property="state" />
+        <result column="details" property="details" />
+        <result column="rsv9" property="rsv9" />
+        <result column="rsv10" property="rsv10" />
+        <result column="rsv11" property="rsv11" />
+        <result column="rsv12" property="rsv12" />
+        <result column="rsv13" property="rsv13" />
+        <result column="rsv14" property="rsv14" />
+        <result column="rsv15" property="rsv15" />
+        <result column="rsv16" property="rsv16" />
+        <result column="rsv17" property="rsv17" />
+        <result column="rsv18" property="rsv18" />
+        <result column="rsv19" property="rsv19" />
+        <result column="rsv20" property="rsv20" />
+    </resultMap>  
+ 
+	<select id="getObjectList" parameterType="com.xcz.object.model.Kgyxbinfo" resultMap="BaseResultMap">
+		 select a.*  from kgyxbinfo a
+		 <where>
+               a.type = #{type}
+            <if test="name != ''">
+               and a.name like #{name}
+            </if>
+               
+            <if test="num != ''">
+               and a.num like #{num}
+            </if>
+            <if test="description != ''">
+               and a.description like #{description}
+            </if>
+            <if test="model != ''">
+               and a.model like #{model}
+            </if>
+            <if test="price != ''">
+               and a.price like #{price}
+            </if>
+            <if test="state != ''">
+               and a.state like #{state}
+            </if>
+         </where>
+		  order by a.rsv20 desc
+	</select>
+	
+	
+	<select id="getObjectByUser" parameterType="com.xcz.object.model.Kgyxbinfo" 
+	                              resultType="com.xcz.object.model.Kgyxbinfo">
+		select * from kgyxbinfo where type=#{type}
+		
+	</select>
+	
+	
+	 <!--4 单笔新增 -->
+    <insert id="addObjectOnly" parameterType="com.xcz.object.model.Kgyxbinfo" > 
+        
+        insert into kgyxbinfo (
+        type,name,num,description,model,price,state,details,rsv9,rsv10,
+        rsv11,rsv12,rsv13,rsv14,rsv15,rsv16,rsv17,rsv18,rsv19,rsv20
+        ) 
+        values(
+        #{type},#{name},#{num},#{description},#{model},
+        #{price},#{state},#{details},#{rsv9},#{rsv10},
+        #{rsv11},#{rsv12},#{rsv13},#{rsv14},#{rsv15},
+        #{rsv16},#{rsv17},#{rsv18},#{rsv19},#{rsv20})  
+       
+    </insert>
+
+    <!--5 单笔修改 -->
+    <update id="updateObjectOnly" parameterType="com.xcz.object.model.Kgyxbinfo" >
+        update kgyxbinfo set 
+        type=#{type},name=#{name},num=#{num},description=#{description},model=#{model},
+        price=#{price},state=#{state},details=#{details},rsv9=#{rsv9},rsv10=#{rsv10},
+        rsv11=#{rsv11},rsv12=#{rsv12},rsv13=#{rsv13},rsv14=#{rsv14},rsv15=#{rsv15},
+        rsv16=#{rsv16},rsv17=#{rsv17},rsv18=#{rsv18},rsv19=#{rsv19},rsv20=#{rsv20}
+        where id=#{id}
+    </update>
+    
+    
+    <!--6 单笔删除 -->
+    <delete id="deleteObjectOnly" parameterType="com.xcz.object.model.Kgyxbinfo" >
+        delete from kgyxbinfo where id=#{id}
+    </delete>
+    
+    
+    
+    <!-- 快捷搜索 -->
+    <select id="getObjectListByKj" parameterType="com.xcz.object.model.Kgyxbinfo" resultMap="BaseResultMap">
+     select * from kgyxbinfo
+			<where>
+			    type=#{type}
+			    
+			<if test=" rsv19 != ''">
+			    and ( name like #{rsv19}
+		    	
+		    	or  num like #{rsv19}
+		    	
+		    	or  description like #{rsv19}
+		    	
+		    	or model like #{rsv19}
+		    	
+		    	or price like #{rsv19}
+		    	
+		    	or state like #{rsv19}  )
+		    	
+		     </if>
+		     order by rsv20 desc
+			
+		   </where>
+		   
+    </select>
+    
+   
+    
+    <!-- 模块搜索 -->
+    <select id="getObjectListByMk" parameterType="com.xcz.object.model.Kgyxbinfo" resultMap="BaseResultMap">
+     select * from kgyxbinfo
+			<where>
+			    type=#{type}
+			    
+			    and  model like #{model}
+			
+		        order by rsv20 desc
+			
+		   </where>
+		   
+    </select>
+    
+    
+    
+    
+    
+    <!-- 分类搜索 -->
+    <select id="getObjectListByFl" parameterType="com.xcz.object.model.Kgyxbinfo" resultMap="BaseResultMap">
+       select * from kgyxbinfo
+		<where>
+          type=#{type}
+          
+         <if test="rsv2 != ''">
+          and ${rsv2} like #{rsv3}
+         </if>
+         
+         <if test="rsv4 != ''">
+          and ${rsv4} like #{rsv5}
+         </if>
+         
+         <if test="rsv6 != ''">
+          and ${rsv6} like #{rsv7}
+         </if>
+         
+         <if test="rsv8 != ''">
+          and ${rsv8} like #{rsv9}
+         </if>
+         
+         <if test="rsv10 != ''">
+          and ${rsv10} like #{rsv11}
+         </if>
+         
+         <if test="rsv12 != ''">
+          and ${rsv12} like #{rsv13}
+         </if>
+         
+         <if test="rsv14 != ''">
+          and ${rsv14} like #{rsv15}
+         </if>
+         
+         <if test="rsv16 != ''">
+          and ${rsv16} like #{rsv17}
+         </if>
+         
+         <if test="rsv18 != ''">
+          and ${rsv18} like #{rsv19}
+         </if>
+         order by rsv20 desc
+       </where>
+    
+    </select>
+    
+    
+    
+    
+    
+    
+     
+	
+</mapper>

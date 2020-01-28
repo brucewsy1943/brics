@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+  <head>
+    <title>新闻管理</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!-- easyui标准引用 -->
+	<link rel="stylesheet" type="text/css" href="../../Source/easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../../Source/easyui/themes/theme-icon.css">
+	<link rel="stylesheet" type="text/css" href="../../Source/css/icon.css"> 
+	<script type="text/javascript" src="../../Source/easyui/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="../../Source/easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../../Source/easyui/locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="../../Source/js/tools.js"></script>
+	<script type="text/javascript" src="../../Source/js/datagrid.js"></script>
+	
+	<script type="text/javascript" src="../../Source/js/wangEditor.min.js"></script>
+
+	
+  </head>
+  <body>
+	<div id="dg" class="easyui-pagination" data-options="" style="border:1px solid #ddd;"></div>
+ 	<div id="div_toolbar" >  
+ 	                                                           
+    <a class="easyui-linkbutton" iconCls="icon-insert-new" plain="true" onclick="add('../../newsinfo/addObjectOnly')">新增</a>
+	<a class="easyui-linkbutton" iconCls="icon-edit-new" plain="true" onclick="edit('../../newsinfo/updateObjectOnly')">修改</a>
+	<a class="easyui-linkbutton" iconCls="icon-delet-new" plain="true" onclick="del('../../newsinfo/deleteObjectOnly')">删除</a>
+	<a class="easyui-linkbutton" iconCls="icon-ref_btn" plain="true" onclick="ref()">刷新</a> 
+	<!--
+	<a class="easyui-linkbutton" iconCls="icon-import-new" plain="true" onclick="exportExcel()">导入</a> 
+	<a class="easyui-linkbutton" iconCls="icon-export-new" plain="true" onclick="exportExcel()">导出</a> 
+	<a class="easyui-linkbutton" iconCls="icon-issue-new" plain="true" onclick="exportExcel()">发布</a> 
+	<a class="easyui-linkbutton" iconCls="icon-repeal-new" plain="true" onclick="exportExcel()">撤销</a> 
+    -->
+    <div class="toolbar-search" style="padding-top: 5px;  " >
+               <input id="se_title" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入标题'">
+               <input id="se_subhead" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入副标题'">
+               <input id="se_intro" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入简介'">
+               <input id="se_content" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入正文'">
+               <select id="se_isFb" name="se_isFb" class="easyui-combobox" style="width:100px;"
+						data-options="panelHeight:'auto',editable:false">
+							<option value="all">--发布状态--</option>
+							<option value="已发布">已发布</option>
+							<option value="未发布">未发布</option>
+			   </select>
+            <a class="easyui-linkbutton" iconCls="icon-search-new" onclick="search_bb()" style="background:#049ec4;color:#fff ">开始检索</a>
+        </div>
+</div>
+
+
+
+<div id="editDiv" class="easyui-dialog" style="width: 75%; padding: 10px 20px; height: 70%;display: none;"
+        closed="true" buttons="#dlg-buttons" >                         
+         
+        <form id="editForm"  method="post" style="margin-top: 20px; ">
+				<table cellpadding="5" style="font-size: 12px;width: 100%;">
+				    <tr>
+                        <td style="text-align: right;width:15%" >标题：</td>
+                        
+                        <td ><input style="width:100%;height:40px;" id="title" name="title" class="easyui-textbox" type="text" 
+                        data-options="required:true,editable:true,validType:'length[1,100]',prompt:'请输入标题',"></input>
+                            <input type="hidden" id="type" name="type">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right;">副标题：</td>
+                        <td><input style="width:100%;height:40px;" id="subhead" name="subhead" class="easyui-textbox" type="text" 
+                        data-options="required:false,editable:true,validType:'length[1,100]',prompt:'请输入副标题'"></input></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="text-align: right">简介：</td>
+                        <td><input style="width:100%;height:80px;" id="intro" name="intro" class="easyui-textbox" type="text" 
+                        data-options="required:false,editable:true,multiline:true,validType:'length[1,500]',prompt:'请输入简介'"></input></td>
+                    </tr>
+                     <tr>
+                        <td style="text-align: right;" >正文：</td>
+						<td><div  id="edit1" style="width:100%" ></div> <input type="hidden" name="content" id="content"  />
+						</td>
+					</tr> 
+                     <tr>
+                        <td style="text-align: right">上传图片：</td>
+						<td>
+                         <input type="hidden" id="min_img" name="img">
+                        <div style="background-color: #0071cc;width:80px;height:30px;border-radius:5px 5px 5px 5px;
+                                     text-align: center;float: left;line-height: 30px;"> 
+                            <a href="javascript:upimg();" style="color:#fff;text-decoration: none;">上传图片</a></div>
+                        <div style="background-color: #0071cc;width:80px;height:30px;border-radius:5px 5px 5px 5px;
+                                     text-align: center;line-height: 30px; margin-left: 120px;"> 
+                            <a href="javascript:delimg();" style="color:#fff;text-decoration: none;">删除图片</a></div>
+                        <div id="min_img_div" ></div>
+                        
+                       </td>
+					</tr>
+					<!--  
+					<tr>
+                        <td style="text-align: right">小图：</td>
+						<td><input style="width:100%;height:40px;" id="pid" name="pid" class="easyui-textbox" 
+						type="text" data-options="required:false,editable:true,validType:'length[1,50]',prompt:'请输入联系电话'" ></input></td>
+					</tr>
+					-->
+					<tr>
+                        <td style="text-align: right">上传附件：</td>
+						<td>
+                         <input type="hidden" id="min_file" name="files">
+                        <div style="background-color: #049ec4;width:80px;height:30px;border-radius:5px 5px 5px 5px;
+                                     text-align: center;float: left;line-height: 30px;"> 
+                            <a href="javascript:upfiles();" style="color:#fff;text-decoration: none;">上传附件</a></div>
+                        <div style="background-color: #049ec4;width:80px;height:30px;border-radius:5px 5px 5px 5px;
+                                     text-align: center;line-height: 30px; margin-left: 120px;"> 
+                            <a href="javascript:delfile();" style="color:#fff;text-decoration: none;">删除附件</a></div>
+                        <div id="min_file_div" ></div>
+                        
+                       </td>
+					</tr>
+					<!--  
+					<tr>
+                        <td style="text-align: right">附件2：</td>
+						<td><input style="width:100%;height:40px;" id="display" name="display" class="easyui-textbox" 
+						type="text" data-options="required:false,editable:true,validType:'length[1,50]',prompt:'请输入联系电话'" ></input></td>
+					</tr>
+					-->
+					<tr>
+                        <td style="text-align: right">展示方式：</td>
+                        <td><select id="display" name="display" style="width:100%;height:40px;"  class="easyui-combobox"
+                                    data-options="editable:false,validType:'length[1,500]',panelHeight:'auto',prompt:'--请选择发布状态--',required:false">
+                            <option value="竖排" selected="selected">竖排</option>
+                            <option value="横排">横排</option>
+                            <option value="模块">模块</option>
+                            <option value="无">无</option>
+                            </select></td>
+                    </tr>
+					<tr>
+                        <td style="text-align: right">排序编号：</td>
+						<td><input style="width:100%;height:40px;" id="num" name="num" class="easyui-numberbox" 
+						type="text" data-options="required:false,editable:true,min:0,prompt:'请输入排序编号'" ></input></td>
+					</tr>
+					
+					<tr>
+                        <td style="text-align: right">发布状态：</td>
+                        <td><select id="isFb" name="isFb" style="width:100%;height:40px;"  class="easyui-combobox"
+                                    data-options=" editable:false,validType:'length[1,500]',panelHeight:'auto',prompt:'--请选择发布状态--',required:false">
+                            <option value="已发布" selected="selected">已发布</option>
+                            <option value="未发布">未发布</option>
+                            </select></td>
+                    </tr>
+					<tr>
+                        <td style="text-align: right">发布日期：</td>
+						<td><input style="width:100%;height:40px;" id="fbDate" name="fbDate" class="easyui-datebox" 
+						type="text" data-options="required:false,editable:false,validType:'length[1,50]',prompt:'请选择发布日期'" ></input></td>
+					</tr>
+					
+                </table>
+            
+             <div id="dlg-buttons" style="display: block">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-ok" onclick="formsubmit()" style="width: 25%">提交</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#editDiv').dialog('close')" style="width: 25%">取消</a>
+            </div>
+        </form>
+    </div>
+    
+<!-- 上传图片 -->
+<div id="wu-upimg" class="easyui-dialog" style="width: 60%;  height: 50%;display: none;" closed="true">   
+   <form id="upOnlyImgForm" name="upOnlyImgForm"  action="../../Upload/uploadImage"
+        enctype="multipart/form-data" method="post">
+        <div id="newUpload2"> 
+           <input id="upImage" type="file" name="upImage" multiple="true" class="upImgBtn"> 
+           <input type="button" id="upOnlyImgBtn"  value="上传照片" class="upImgBtn"/>
+        </div> 
+        
+        
+        <!--  
+        <div id="showMulImg">
+        
+        </div>
+        -->
+
+    </form>        
+</div>
+
+<!-- 上传附件 -->
+<div id="wu-upfiles" class="easyui-dialog" style="width: 60%;  height: 50%;display: none;" closed="true">   
+   <form id="upOnlyFileForm" name="upOnlyFileForm"  action="../../Upload/uploadFile"
+        enctype="multipart/form-data" method="post">
+        <div id="newUpload2"> 
+           <input id="upfile" type="file" name="upfile" multiple="true" class="upImgBtn"> 
+           <input type="button" id="upOnlyFileBtn"  value="上传文件" class="upImgBtn"/>
+        </div> 
+        
+        
+        <!--  
+        <div id="showMulImg">
+        
+        </div>
+        -->
+
+    </form>       
+</div>
+
+<!-- 查看图片 -->
+<div id="wu-openMaxImg" class="easyui-dialog" style="width: 60%;  height: 50%;display: none;" closed="true">   
+   <img id="openMaxImg"/>   
+</div>
+    
+	<script type="text/javascript">
+        console.log("type:"+type);
+    	var columnsData=[[
+                          {field:'checkbox',title:'checkbox',align:'center',checkbox:true},
+                          {field:'id',title:'id',align:'center',hidden:true},
+                          {field:'title',title:'标题',align:'center',width:30},
+                          {field:'subhead',title:'副标题',align:'center',width:30},
+                          {field:'intro',title:'简介',align:'center',width:30},
+                          {field:'content',title:'正文',align:'center',width:50,height:50,
+                           
+                           /*,formatter:function(value,row){
+                        	  var str="";
+                        	  if(value.length>60){
+                        		 str+=value.substr(0,60)+"......";
+                        	  }
+                        	  return str;
+                          }*/
+                          },  
+                          {field:'img',title:'图片',align:'center',width:30,formatter:function(value,row){
+                        	  var str="";
+                        	  if(value!=''||value==null){
+                        		  var val=value.split(",");
+                        		  for(var v in val){
+                        			  str+= "<img src='"+val[v]+"' style='width:32px;height:32px;'/>";
+                        		  }
+                        	  }
+                        	  return str;
+                          }},
+                          {field:'files',title:'附件',align:'left',width:30,formatter:function(value,row){
+                        	  var str="";
+                        	  if(value!=''||value==null){
+                        		  var val=value.split(",");
+                        		  for(var v in val){
+                        			  var fileName=val[v];
+                        			  fileName=fileName.substr(fileName.lastIndexOf("/")+1,fileName.length);
+                        			  str+= "<a href='"+val[v]+"' target='_blank'>"+fileName+"</a><br/>";
+                        		  }
+                        	  }
+                        	  return str;
+                          }},
+                          {field:'num',title:'排序号',align:'center',width:20},
+                          {field:'isFb',title:'发布状态',align:'center',width:20,formatter:function(value,row){
+                        	  var id=row.id;
+                        	  var str="";
+                        	   if(value!=''||value==null){
+                        		   if(value=="已发布"){
+                        			   str+="<span style='color:#00FF00;'>已发布</span> / "+
+                        			   "<a href='javascript:void(0);' onclick='editIsFb("+id+",&quot;未发布&quot;)' style='background:#049ec4;color:#fff;border:1px #049ec4 solid;'>撤销发布</a>"
+                        		   }else{
+                        			   str+="<span style='color:blue;'>未发布</span> / "+
+                        			   "<a href='javascript:void(0);' onclick='editIsFb("+id+",&quot;已发布&quot;)' style='background:#049ec4;color:#fff;border:1px #049ec4 solid;'>点击发布</a>"
+                        		   }
+                        	   }else{
+                        		   str+="<span style='color:blue;'>未发布</span> / "+
+                    			   "<a href='javascript:void(0);' onclick='editIsFb("+id+",&quot;已发布&quot;)' style='background:#049ec4;color:#fff;border:1px #049ec4 solid;'>点击发布</a>"
+                    		   }
+                        	  return str;
+                            }
+                          },
+                          {field:'fbDate',title:'发布日期',align:'center',width:20},
+                          {field:'rsv20',title:'编辑时间',align:'center',width:20}
+                          ]];
+    	
+    	 var  queryParams={
+    			 "type":type,
+    			 "title":"",
+    			 "subhead":"",
+    			 "intro":"",
+    			 "content":"",
+ 			     "isFb":""};
+     	 $("#dg").datagrid({
+     		  url:'../../newsinfo/getObjectList',
+     		  queryParams:queryParams,
+               fit:true,               //固定表头和底部的分页工具 
+               fitColumns:true,        //自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动
+               checkOnSelect: true,   //如果为false，当用户仅在点击该复选框的时候才会被选中或取消
+               rownumbers:true,        //显示行号  
+               loadMsg:'数据加载中...',  
+               pagination:true,        //是否显示分页工具  
+               pageSize:20,    
+               striped:true,           //是否显示斑马线效果
+               //selectOnCheck:false,    //如果为false，选择行将不选中复选框;如果为true，单击复选框将永远选择行
+               columns:columnsData,
+               toolbar:'#div_toolbar',
+            
+            });
+
+     function search_bb(){
+    	var title=$("#se_title").val();
+    	var subhead=$("#se_subhead").val();
+    	var intro=$("#se_intro").val();
+     	var content=$("#se_content").val();
+     	var isFb=$('#se_isFb').combotree('getValue'); 
+     	queryParams={"type":type,
+     			     "title":title,
+     			     "subhead":subhead,
+       			     "intro":intro,
+     			     "content":content,
+     			     "isFb":isFb};
+     	$("#dg").datagrid({
+     		  url:'../../newsinfo/getObjectList',
+    		  queryParams:queryParams,
+              fit:true,               //固定表头和底部的分页工具 
+              fitColumns:true,        //自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动
+              checkOnSelect: true,   //如果为false，当用户仅在点击该复选框的时候才会被选中或取消
+              rownumbers:true,        //显示行号  
+              loadMsg:'数据加载中...',  
+              pagination:true,        //是否显示分页工具  
+              pageSize:20,    
+              striped:true,           //是否显示斑马线效果
+              //selectOnCheck:false,    //如果为false，选择行将不选中复选框;如果为true，单击复选框将永远选择行
+              columns:columnsData,
+              toolbar:'#div_toolbar',
+           });
+ 
+     }
+
+
+	</script>
+	<script>
+	
+	var E = window.wangEditor;
+    var editor1 = new E('#edit1');
+    editor1.customConfig.uploadImgServer = '../../Upload/wangEditorUp'; //上传URL
+    editor1.customConfig.uploadImgMaxSize = 3 * 1024 * 1024;
+    editor1.customConfig.uploadImgMaxLength = 5;    
+    editor1.customConfig.uploadFileName = 'myFileName';
+    editor1.customConfig.uploadImgHooks = {
+     customInsert: function (insertImg, result, editor) {
+             var url =result.data;
+            // console.log("上传的文件："+url);
+             insertImg(url);
+         }
+     };
+    editor1.create();
+    
+    
+    
+    function editIsFb(id,isFb){
+		console.log(id+":"+isFb);
+		$.post("../../newsinfo/updateIsFb",{"id":id,"isFb":isFb},function(result){
+		    if(result){
+		    	 $("#dg").datagrid('reload');
+		    }else{
+		    	$.messager.alert("提示消息", result.msg,'error');
+		    }
+		  });
+	}
+	</script>
+
+  </body>
+  
+  
+</html>

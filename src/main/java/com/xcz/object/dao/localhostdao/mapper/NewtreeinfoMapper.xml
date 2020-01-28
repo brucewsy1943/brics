@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+ 
+<mapper namespace="com.xcz.object.dao.localhostdao.NewtreeinfoDao">
+    <resultMap id="BaseResultMap" type="com.xcz.object.model.Newtreeinfo">  
+        <result column="id" property="id"  jdbcType="INTEGER" />
+        <result column="type" property="type" />
+        <result column="columns" property="columns" />
+        <result column="subhead" property="subhead" />
+        <result column="intro" property="intro" />
+        <result column="content" property="content" />
+        <result column="img" property="img" />
+        <result column="pid" property="pid" />
+        <result column="files" property="files" />
+        <result column="display" property="display" />
+        <result column="num" property="num" />
+        <result column="isFb" property="isFb" />
+        <result column="fbDate" property="fbDate" />
+        <result column="rsv13" property="rsv13" />
+        <result column="rsv14" property="rsv14" />
+        <result column="rsv15" property="rsv15" />
+        <result column="rsv16" property="rsv16" />
+        <result column="rsv17" property="rsv17" />
+        <result column="rsv18" property="rsv18" />
+        <result column="rsv19" property="rsv19" />
+        <result column="rsv20" property="rsv20" />
+        <result column="text" property="text" />
+    </resultMap>  
+ 
+	<select id="getTrees" parameterType="com.xcz.object.model.Newtreeinfo" resultMap="BaseResultMap">
+		 select a.id,a.columns as text,a.pid as pid  from newtreeinfo a where a.type = #{type}
+		  order by (a.num+0) asc,a.rsv20 desc
+	</select>
+	
+	<select id="getObjectList" parameterType="com.xcz.object.model.Newtreeinfo" resultMap="BaseResultMap">
+		 select a.*  from newtreeinfo a where a.type = #{type}
+		  order by (a.num+0) asc,a.rsv20 desc
+	</select>
+	
+	
+	<select id="getObjectListIsFb" parameterType="com.xcz.object.model.Newtreeinfo" resultMap="BaseResultMap">
+		 select a.*,a.pid   from newtreeinfo a where a.type = #{type} and a.isFb=#{isFb}
+		  order by (a.num+0) asc,a.rsv20 desc
+	</select>
+	
+	
+	<select id="getObjectListIsFbByPid" parameterType="com.xcz.object.model.Newtreeinfo" resultMap="BaseResultMap">
+		 select a.*,a.pid   from newtreeinfo a where a.pid = #{pid} and a.isFb=#{isFb}
+		  order by (a.num+0) asc,a.rsv20 desc
+	</select>
+	
+	
+	<select id="getListByPid" parameterType="com.xcz.object.model.Newtreeinfo" resultMap="BaseResultMap">
+		 select a.*  from newtreeinfo a  where a.type=#{type} and  a.pid=#{pid}  order by (a.num+0) asc,a.rsv20 desc
+	</select>
+	
+	<select id="getObjectById" parameterType="com.xcz.object.model.Newtreeinfo" 
+	                           resultType="com.xcz.object.model.Newtreeinfo">
+		 select a.*  from newtreeinfo a  where a.id=#{id}
+	</select>
+	
+	
+	<select id="getObjectByUser" parameterType="com.xcz.object.model.Newtreeinfo" 
+	                              resultType="com.xcz.object.model.Newtreeinfo">
+		select * from newtreeinfo where type=#{type}
+		
+	</select>
+	
+
+	
+	
+	 <!--4 单笔新增 -->
+    <insert id="addObjectOnly" parameterType="com.xcz.object.model.Newtreeinfo" > 
+        
+        insert into newtreeinfo (
+        type,columns,subhead,intro,content,img,pid,files,display,num,
+        isFb,fbDate,rsv13,rsv14,rsv15,rsv16,rsv17,rsv18,rsv19,rsv20
+        ) 
+        values(
+        #{type},#{columns},#{subhead},#{intro},#{content},
+        #{img},#{pid},#{files},#{display},#{num},
+        #{isFb},#{fbDate},#{rsv13},#{rsv14},#{rsv15},
+        #{rsv16},#{rsv17},#{rsv18},#{rsv19},#{rsv20})  
+       
+    </insert>
+
+    <!--5 单笔修改 -->
+    <update id="updateObjectOnly" parameterType="com.xcz.object.model.Newtreeinfo" >
+        update newtreeinfo set 
+        type=#{type},columns=#{columns},subhead=#{subhead},intro=#{intro},content=#{content},
+        img=#{img},pid=#{pid},files=#{files},display=#{display},num=#{num},
+        isFb=#{isFb},fbDate=#{fbDate},rsv13=#{rsv13},rsv14=#{rsv14},rsv15=#{rsv15},
+        rsv16=#{rsv16},rsv17=#{rsv17},rsv18=#{rsv18},rsv19=#{rsv19},rsv20=#{rsv20}
+        where id=#{id}
+    </update>
+    
+    
+    <!--6 单笔删除 -->
+    <delete id="deleteObjectOnly" parameterType="com.xcz.object.model.Newtreeinfo" >
+        delete from newtreeinfo where id=#{id}
+    </delete>
+    
+    <!--7 修改发布状态-->
+    <update id="updateIsFb" parameterType="com.xcz.object.model.Newtreeinfo" >
+        update newtreeinfo set isFb=#{isFb},rsv20=#{rsv20}
+        where id=#{id}
+    </update>
+     
+	
+</mapper>

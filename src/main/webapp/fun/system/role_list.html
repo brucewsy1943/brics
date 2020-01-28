@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+  <head>
+    <title>角色管理</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!-- easyui标准引用 -->
+	<link rel="stylesheet" type="text/css" href="../../Source/easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../../Source/easyui/themes/theme-icon.css">
+	<script type="text/javascript" src="../../Source/easyui/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="../../Source/easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../../Source/easyui/locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="../../Source/js/tools.js"></script>
+	<script type="text/javascript" src="../../Source/js/datagrid.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="../../Source/css/icon.css"> 
+  </head>
+  <body>
+	<div id="dg" class="easyui-pagination" data-options="" style="border:1px solid #ddd;"></div>
+ 	<div id="div_toolbar" >  
+ 	                                                           
+    <a class="easyui-linkbutton" iconCls="icon-insert-new" plain="true" onclick="add('../../roleinfo/addObjectOnly')">新增</a>
+	<a class="easyui-linkbutton" iconCls="icon-edit-new" plain="true" onclick="edit('../../roleinfo/updateObjectOnly')">修改</a>
+	<a class="easyui-linkbutton" iconCls="icon-delet-new" plain="true" onclick="del('../../roleinfo/deleteObjectOnly')">删除</a>
+	<a class="easyui-linkbutton" iconCls="icon-ref_btn" plain="true" onclick="ref()">刷新</a> 
+
+        <div class="toolbar-search" style="padding-top: 5px;  " >
+             <input id="se_rsv1" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入角色名'">
+            <a class="easyui-linkbutton" iconCls="icon-search-new" onclick="search_bb()" style="background:#049ec4;color:#fff ">开始检索</a>
+        </div>
+    </div>
+
+
+
+<div id="editDiv" class="easyui-dialog" style="width: 70%; padding: 10px 20px; height: 70%;display: none;"
+        closed="true" buttons="#dlg-buttons" >                         
+         
+        <form id="editForm"  method="post" style="margin-top: 20px; margin-left: 20px;">
+				<table cellpadding="5" style="font-size: 12px;width: 100%;">
+				    <tr>
+                        <td style="text-align: right">角色名称：</td>
+                        <td>
+                              <input style="width:80%;height:40px;" id="rsv1" name="rsv1" class="easyui-textbox" type="text" 
+                              data-options="required:true,editable:true,validType:'length[1,100]',prompt:'请输入用户名',"></input>
+                              </td>
+                    </tr>
+                </table>
+            
+             <div id="dlg-buttons" style="display: block">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-ok" onclick="formsubmit()" style="width: 25%">提交</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" 
+                onclick="javascript:$('#editDiv').dialog('close')" style="width: 25%">取消</a>
+            </div>
+        </form>
+    </div>
+    
+    
+    
+    
+    <div id="RoleUserDiv" class="easyui-dialog" style="width: 30%; padding: 10px 20px; height: 70%;display: none;"
+        closed="true" buttons="#RoleUser-buttons" >                         
+         
+        <form id="RoleUserForm"  method="post" style="margin-top: 5px; margin-left: 5px;">
+				
+             <div>
+                <input type="hidden" name="mid" id="mid"/>
+                <input type="hidden" name="pid" id="pid"/>
+              
+                   <ul style="list-style:none;width:79%;padding:0;border-radius:5px;" id="role_list"></ul>
+               
+                 <!-- 
+                <input type="text" id="pid" name="pid" class="easyui-combotree"   style="width:80%;height:40px;"
+                             data-options="url:'../../menuinfo/getObjectList?T=T',required:true,
+                              method:'get',prompt:'--父级菜单--'" />
+                 --> 
+             </div>           
+
+            
+             <div id="RoleUser-buttons" style="display: block">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-ok" onclick="submitRoleUser()" style="width: 25%">提交</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#RoleUserDiv').dialog('close')" style="width: 25%">取消</a>
+            </div>
+        </form>
+    </div>
+    
+    
+    
+    
+    <div id="ShowRoleUserDiv" class="easyui-dialog" style="width: 70%; padding: 10px 20px; height: 70%;display: none;" closed="true"  >                         
+        <div id="show_toolbar" >                                                  
+            <a class="easyui-linkbutton" id="addRoleUser" iconCls="icon-insert-new" plain="true" href="javascript:void(0);">新增权限</a>
+            <a class="easyui-linkbutton" id="delRoleUser" iconCls="icon-delet-new" plain="true" href="javascript:void(0);">删除权限</a>
+       </div>
+       <table id="roleUser-dg"></table>
+        
+    </div>
+    
+    
+	<script type="text/javascript">
+        var editor1=null;
+    	var columnsData=[[
+                          {field:'checkbox',title:'checkbox',align:'center',checkbox:true},
+                          {field:'id',title:'id',align:'center',hidden:true},
+                          {field:'roleName',title:'角色名称',align:'center',width:30,formatter:function(value,row){
+
+                        	  return "<a href='javavscript:void(0);' onclick='showRoleUser("+row.id+",&quot;"+value+"&quot;)'>"+value+"</a>";
+                          }},
+                          {field:'rsv20',title:'编辑时间',align:'center',width:30}
+                          ]];
+    	
+    	 var  queryParams={"roleName":""};
+     	 $("#dg").datagrid({
+     		  url:'../../roleinfo/getObjectList',
+     		  queryParams:queryParams,
+               fit:true,               //固定表头和底部的分页工具 
+               fitColumns:true,        //自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动
+               checkOnSelect: true,   //如果为false，当用户仅在点击该复选框的时候才会被选中或取消
+               rownumbers:true,        //显示行号  
+               loadMsg:'数据加载中...',  
+               pagination:true,        //是否显示分页工具  
+               singleSelect: true,     //行单选
+               pageSize:20,    
+               striped:true,           //是否显示斑马线效果
+               //selectOnCheck:false,    //如果为false，选择行将不选中复选框;如果为true，单击复选框将永远选择行
+               columns:columnsData,
+               toolbar:'#div_toolbar',
+            
+            });
+
+     function search_bb(){
+    	var rid=$("#se_rsv1").val();
+     	queryParams={"rid":rid};
+     	
+
+     	$("#dg").datagrid({
+     		  url:'../../roleinfo/getObjectList',
+    		  queryParams:queryParams,
+              fit:true,               //固定表头和底部的分页工具 
+              fitColumns:true,        //自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动
+              checkOnSelect: true,   //如果为false，当用户仅在点击该复选框的时候才会被选中或取消
+              rownumbers:true,        //显示行号  
+              loadMsg:'数据加载中...',  
+              pagination:true,        //是否显示分页工具  
+              singleSelect: true,     //行单选
+              pageSize:20,    
+              striped:true,           //是否显示斑马线效果
+              //selectOnCheck:false,    //如果为false，选择行将不选中复选框;如果为true，单击复选框将永远选择行
+              columns:columnsData,
+              toolbar:'#div_toolbar',
+           });
+ 
+     }
+     
+     
+//打开分配权限窗口
+function showRoleUser(id,name){
+	   
+	   $("#ShowRoleUserDiv").dialog({
+			title: name+"->权限管理",
+			modal : true,// 模拟弹出对话框，添加mask层，弹出后，背景变灰色
+		});
+		
+		$("#addRoleUser").unbind("click");
+		$("#addRoleUser").click({id:id,name:name},addRoleUser);
+		
+		$("#delRoleUser").unbind("click");
+		$("#delRoleUser").click({url:"../../roleuserinfo/deleteObjectOnly"},delRoleUser);
+		
+		$("#RoleUserForm").attr('action',"");
+		$("#RoleUserForm").attr('action',"../../roleuserinfo/addObjectAll?rid="+id); 
+		
+		
+		
+		$('#roleUser-dg').treegrid({
+    	    url:'../../roleuserinfo/getObjectList?role_id='+id,
+    	    idField:'mid',
+    	    treeField:'text',
+    	    rownumbers:true,
+    	    animate:true,
+    	    fit:true,//固定表头和底部的分页工具 
+    	    fitColumns:true,    //自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动
+    	    singleSelect :true,
+    	    checkOnSelect:true,   //如果为false，当用户仅在点击该复选框的时候才会被选中或取消
+    	  	selectOnCheck:true,  //如果为false，选择行将不选中复选框;如果为true，单击复选框将永远选择行
+    	    striped:true,//隔行变色
+    	    pagination:true,
+    	    columns:[[
+                 {field:'checkbox',title:'checkbox',align:'center',checkbox:true},
+                 {field:'id',title:'id',align:'center',hidden:true},
+                 {field:'mid',title:'mid',align:'center',hidden:true},
+                 {field:'text',title:'网站菜单',align:'left',width:30},
+                 {field:'roleName',title:'用户角色',align:'center',width:30},
+                 {field:'rsv20',title:'编辑时间',align:'center',width:30}
+              ]],
+    	    toolbar:'#show_toolbar',
+    	 
+    	});
+		
+		
+         
+         /*
+		$("#roleUser-dg").datagrid({
+     		  url:'../../roleuserinfo/getObjectList?id='+id,
+              fit:true,               //固定表头和底部的分页工具 
+              fitColumns:true,        //自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动
+              checkOnSelect: true,   //如果为false，当用户仅在点击该复选框的时候才会被选中或取消
+              rownumbers:true,        //显示行号  
+              loadMsg:'数据加载中...',  
+              pagination:true,        //是否显示分页工具  
+              pageSize:20,    
+              striped:true,           //是否显示斑马线效果
+              //selectOnCheck:false,    //如果为false，选择行将不选中复选框;如果为true，单击复选框将永远选择行
+              columns:[[
+                 {field:'checkbox',title:'checkbox',align:'center',checkbox:true},
+                 {field:'id',title:'id',align:'center',hidden:true},
+                 {field:'rsv2',title:'网站菜单',align:'center',width:30},
+                 {field:'rsv1',title:'用户角色',align:'center',width:30},
+                 {field:'rsv20',title:'编辑时间',align:'center',width:30}
+              ]],
+              toolbar:'#show_toolbar',
+           });
+           */
+		
+	  $("#ShowRoleUserDiv").dialog('open');
+	  
+	  
+
+}
+     
+     
+     //单笔新增的方法
+function addRoleUser(par){
+	   $("#RoleUserDiv").dialog({
+			title: par.data.name+"->新增权限",
+			modal : true,// 模拟弹出对话框，添加mask层，弹出后，背景变灰色
+		});		
+		var selectRows = $("#roleUser-dg").datagrid("getSelections");
+		var pid=selectRows.length>0?selectRows[0].mid:"1";
+	   $.getJSON("../../menuinfo/getMenuS?pid="+pid,function(result){
+	   
+	        var str='<li style="margin: 10px 3px;"><input type="button"  id="roleAllBtn" value="全选" /></li>';
+	        for(var key in result){
+	           str+='<li style="margin-top:5px;">'+
+	           '<input type="checkbox" style="width:20px;height:20px;" name="role_id" value="'+result[key].id+'">'+result[key].text+'</li>';
+		      }
+	        $("#role_list").html(str);
+	        $("#roleAllBtn").click(function(){
+                var checkboxs=document.getElementsByName("role_id");
+                for(var key in checkboxs){
+
+                    if(checkboxs[key].checked){
+                      checkboxs[key].checked=false;
+                    }else{
+                      checkboxs[key].checked=true;
+                    } 
+                }
+           });
+	   
+	   });
+	   $("#RoleUserForm").form('clear');
+	   $("#RoleUserForm").find('input,textarea,select').attr('disabled',false);//取消完全禁用
+	   $("#RoleUserDiv").dialog('open');
+}
+
+
+
+       
+function submitRoleUser(){
+    var checkboxs=document.getElementsByName("role_id");
+     var role_ids=[];
+     for(var key in checkboxs){
+         if(checkboxs[key].checked){
+                if(checkboxs[key].value!=undefined){
+                   role_ids.push(checkboxs[key].value);
+                }
+                
+         }
+                  
+    }
+
+	if(role_ids!=null){
+		$("#mid").val(role_ids.join(","));
+	}
+	
+	var selectRows = $("#roleUser-dg").datagrid("getSelections");
+	var pid=selectRows.length>0?selectRows[0].mid:"1";
+	$("#pid").val(pid);
+    $("#RoleUserForm").form('submit', {
+                type:"post",  //提交方式    
+                url:$("#RoleUserForm")[0].action, //请求url
+                success:function(res)
+                { //提交成功的回调函数   
+                    var result=JSON.parse(res);
+                    if(result.status){
+                       $.messager.alert("提示消息", result.msg, 'info');
+                       $("#RoleUserDiv").dialog('close');
+                       $("#roleUser-dg").treegrid('reload');
+                    }else{
+                       $.messager.alert("提示消息", result.msg, 'info');
+                    }
+                }    
+            });
+
+}
+
+
+
+
+//批量删除方法 
+ function delRoleUser(par){
+       console.log("为什么执行了多次");
+	   var selectRows = $("#roleUser-dg").datagrid("getSelections");//获取的是数组，多行数据
+
+	   if(!checkDelEdit(selectRows,"删除")){
+		   return;
+	   }
+	   var deleteArray = new Array();
+	   for (var i = 0; i < selectRows.length; i++) {  
+		   deleteArray[i] = selectRows[i].id;  
+      }
+
+	    //如果选中行了，则要进行判断  
+	    $.messager.confirm("确认消息", "确定要删除所选的"+selectRows.length+
+	    		"条记录吗？", function (isDelete) {
+	    	if (!isDelete) {  
+               return;  
+           }
+
+           $.post(par.data.url+'?ids=' + deleteArray, function (jsonObj) {
+               if (jsonObj.status) {  
+                   $.messager.alert('提示', '成功删除选中的记录！');  
+                   $("#roleUser-dg").treegrid("reload"); //删除成功后 刷新页面  
+               } else {  
+                   $.messager.alert('提示信息', '删除失败，请联系管理员！', 'warning');  
+               }  
+           }, "json");
+
+	    });
+  }
+
+
+ 
+
+
+	</script>
+  </body>
+  
+  
+</html>

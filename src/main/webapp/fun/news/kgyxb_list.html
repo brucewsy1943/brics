@@ -1,0 +1,301 @@
+
+<!DOCTYPE html>
+  <head>
+    <title>可供应细胞</title>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!-- easyui标准引用 -->
+	<link rel="stylesheet" type="text/css" href="../../Source/easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../../Source/easyui/themes/theme-icon.css">
+	<link rel="stylesheet" type="text/css" href="../../Source/css/icon.css"> 
+	<script type="text/javascript" src="../../Source/easyui/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="../../Source/easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../../Source/easyui/locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="../../Source/js/tools.js"></script>
+	<script type="text/javascript" src="../../Source/js/datagrid.js"></script>
+  </head>
+  <body>
+	<div id="dg" class="easyui-pagination" data-options="" style="border:1px solid #ddd;"></div>
+ 	<div id="div_toolbar" >  
+ 	                                                           
+    <a class="easyui-linkbutton" iconCls="icon-insert-new" plain="true" onclick="add('../../kgyxbinfo/addObjectOnly')">新增</a>
+	<a class="easyui-linkbutton" iconCls="icon-edit-new" plain="true" onclick="edit('../../kgyxbinfo/updateObjectOnly')">修改</a>
+	<a class="easyui-linkbutton" iconCls="icon-delet-new" plain="true" onclick="del('../../kgyxbinfo/deleteObjectOnly')">删除</a>
+	<a class="easyui-linkbutton" iconCls="icon-ref_btn" plain="true" onclick="ref()">刷新</a> 
+	<a class="easyui-linkbutton" iconCls="icon-import-new" plain="true" onclick="upKgy()">批量导入</a> 
+	<!--
+	<a class="easyui-linkbutton" iconCls="icon-export-new" plain="true" onclick="exportExcel()">导出</a> 
+	<a class="easyui-linkbutton" iconCls="icon-issue-new" plain="true" onclick="exportExcel()">发布</a> 
+	<a class="easyui-linkbutton" iconCls="icon-repeal-new" plain="true" onclick="exportExcel()">撤销</a> 
+    -->
+    <div class="toolbar-search" style="padding-top: 5px;  " >
+               <input id="se_name" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入细胞名称'">
+               <input id="se_num" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入细胞编号'">
+               <input id="se_description" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入细胞描述'">
+               <input id="se_model" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入细胞类型'">
+               <input id="se_price" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入细胞价格'">
+               <input id="se_state" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入细胞说明'">
+            <a class="easyui-linkbutton" iconCls="icon-search-new" onclick="search_bb()" style="background:#049ec4;color:#fff ">开始检索</a>
+        </div>
+</div>
+
+
+
+<div id="editDiv" class="easyui-dialog" style="width: 78%; padding: 10px 20px; height: 70%;display: none;"
+        closed="true" buttons="#dlg-buttons" >                         
+         
+        <form id="editForm"  method="post" style="margin-top: 20px; margin-left: 20px;">
+				<table cellpadding="5" style="font-size: 12px;width: 100%;">
+				   <!--  
+				    <tr>
+                        <td style="text-align: right">细胞大类：</td>
+                        <td><input style="width:100%;height:40px;" id="type" name="type" class="easyui-textbox" type="text" 
+                        data-options="required:true,editable:true,validType:'length[1,100]',prompt:'请输入细胞大类',"></input></td>
+                    </tr>
+                    -->
+                    <tr>
+                        <td style="text-align: right;width:15%">细胞名称：</td>
+                        <td><input style="width:100%;height:40px;" id="name" name="name" class="easyui-textbox" type="text" 
+                        data-options="required:true,editable:true,validType:'length[1,100]',prompt:'请输入细胞名称'"></input></td>
+                        <input type="hidden" id="type" name="type">
+                    </tr>
+                    
+                    <tr>
+                        <td style="text-align: right">细胞编号：</td>
+                        <td><input style="width:100%;height:40px;" id="num" name="num" class="easyui-textbox" type="text" 
+                        data-options="required:true,editable:true,validType:'length[1,50]',prompt:'请输入细胞编号'"></input></td>
+                       
+                    </tr>
+                    <tr>
+                        <td style="text-align: right">细胞描述：</td>
+						<td><input style="width:100%;height:80px;" id="description" name="description" class="easyui-textbox" 
+						type="text" data-options="required:false,multiline:true,editable:true,validType:'length[1,500]',prompt:'请输入细胞描述'" ></input></td>
+					</tr>
+                     <tr>
+                        <td style="text-align: right">细胞类型：</td>
+						<td><input style="width:100%;height:40px;" id="model" name="model" class="easyui-textbox" 
+						type="text" data-options="required:false,editable:true,validType:'length[1,500]',prompt:'请输入细胞类型'" ></input></td>
+					</tr>
+					 <tr>
+                        <td style="text-align: right">细胞价格：</td>
+						<td><input style="width:100%;height:40px;" id="price" name="price" class="easyui-textbox" 
+						type="text" data-options="required:false,editable:true,validType:'length[1,50]',prompt:'请输入细胞价格'" ></input></td>
+					</tr>
+					 <tr>
+                        <td style="text-align: right">细胞说明：</td>
+						<td><input style="width:100%;height:40px;" id="state" name="state" class="easyui-textbox" 
+						type="text" data-options="required:false,editable:true,validType:'length[1,500]',prompt:'请输入细胞说明'" ></input></td>
+					</tr>
+					<tr>
+                        <td style="text-align: right">上传细胞详情：</td>
+						<td>
+                         <input type="hidden" id="min_file" name="details">
+                        <div style="background-color: #049ec4;width:80px;height:30px;border-radius:5px 5px 5px 5px;
+                                     text-align: center;float: left;line-height: 30px;"> 
+                            <a href="javascript:upfiles();" style="color:#fff;text-decoration: none;">上传附件</a></div>
+                        <div style="background-color: #049ec4;width:80px;height:30px;border-radius:5px 5px 5px 5px;
+                                     text-align: center;line-height: 30px; margin-left: 120px;"> 
+                            <a href="javascript:delfile();" style="color:#fff;text-decoration: none;">删除附件</a></div>
+                        <div id="min_file_div" ></div>
+                        
+                       </td>
+					</tr>
+					
+                </table>
+            
+             <div id="dlg-buttons" style="display: block">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-ok" onclick="formsubmit()" style="width: 25%">提交</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#editDiv').dialog('close')" style="width: 25%">取消</a>
+            </div>
+        </form>
+    </div>
+    
+<!-- 上传附件 -->
+<div id="wu-upfiles" class="easyui-dialog" style="width: 60%;  height: 50%;display: none;" closed="true">   
+   <form id="upOnlyFileForm" name="upOnlyFileForm"  action="../../Upload/uploadFile"
+        enctype="multipart/form-data" method="post">
+        <div id="newUpload2"> 
+           <input id="upfile" type="file" name="upfile" multiple="true" class="upImgBtn"> 
+           <input type="button" id="upOnlyFileBtn"  value="上传文件" class="upImgBtn"/>
+        </div> 
+        
+        
+        <!--  
+        <div id="showMulImg">
+        
+        </div>
+        -->
+
+    </form>       
+</div>
+
+
+ <!-- 批量导入-->
+<div id="wu-exportExcel" class="easyui-dialog" style="width: 60%;  height: 60%;display: none;" closed="true">   
+   
+   
+   <form id="upKgyFileForm" name="upKgyFileForm"  action="../../kgyxbinfo/addObjectAll"
+        enctype="multipart/form-data" method="post">
+        <div id="newUpload2"> 
+           <input id="upkgy" type="file" name="upkgy" multiple="true" class="upImgBtn"> 
+           <input type="button" id="upKgyFileBtn"  value="批量导入" class="upImgBtn"/>
+           <h3>请下载批量导入模板：</h3>
+           <a href="../../upFile/files/细胞库导入模板.xlsx">细胞库导入模板.xlsx</a>
+           <br>
+           <a href="../../upFile/files/质粒库导入模板.xlsx">质粒库导入模板.xlsx</a>
+           <div style="color:red">
+             <h3>重要提示：</h3>
+             <p>细胞库导入，模板里的第一个字段类别值为：xbk</p>
+             <p>质粒库导入，模板里的第一个字段类别值为：zlk</p>
+           </div>
+
+        </div> 
+        
+        
+        <!--  
+        <div id="showMulImg">
+        
+        </div>
+        -->
+
+    </form> 
+   
+   
+      
+</div>
+    
+	<script type="text/javascript"> 
+	
+	    
+	
+	    var editor1=null;
+    	var columnsData=[[
+                          {field:'checkbox',title:'checkbox',align:'center',checkbox:true},
+                          {field:'id',title:'id',align:'center',hidden:true},
+                          //{field:'type',title:'细胞类别',align:'center',width:30},
+                          {field:'name',title:'细胞名称',align:'left',width:30},
+                          {field:'num',title:'细胞编号',align:'center',width:20},
+                          {field:'description',title:'细胞描述',align:'left',width:40},
+                          {field:'model',title:'细胞类型',align:'center',width:20}, 
+                          {field:'price',title:'细胞价格',align:'center',width:10},
+                          {field:'state',title:'细胞说明',align:'center',width:20},
+                          {field:'details',title:'细胞详情',align:'center',width:20},
+                          
+                          {field:'rsv20',title:'编辑时间',align:'center',width:20}
+                          ]];
+    	
+    	 var  queryParams={
+    			 "type":type,
+    			 "name":"",
+    			 "num":"",
+ 			     "description":"",
+	   			 "model":"",
+	   			 "price":"",
+	   			 "state":""};
+     	 $("#dg").datagrid({
+     		  url:'../../kgyxbinfo/getObjectList',
+     		  queryParams:queryParams,
+               fit:true,               //固定表头和底部的分页工具 
+               fitColumns:true,        //自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动
+               checkOnSelect: true,   //如果为false，当用户仅在点击该复选框的时候才会被选中或取消
+               rownumbers:true,        //显示行号  
+               loadMsg:'数据加载中...',  
+               pagination:true,        //是否显示分页工具  
+               pageSize:20,    
+               striped:true,           //是否显示斑马线效果
+               //selectOnCheck:false,    //如果为false，选择行将不选中复选框;如果为true，单击复选框将永远选择行
+               columns:columnsData,
+               toolbar:'#div_toolbar',
+            
+            });
+
+     function search_bb(){
+    	var rsv1=type;
+    	var name=$("#se_name").val();
+     	var num=$("#se_num").val();
+     	var description=$("#se_description").val();
+     	var model=$("#se_model").val();
+     	var price=$("#se_price").val();
+     	var state=$("#se_state").val();
+     	queryParams={
+     			     "type":rsv1,
+     			     "name":name,
+     			     "num":num,
+     			     "description":description,
+		   			 "model":model,
+		   			 "price":price,
+		   			 "state":state};
+     	
+
+     	$("#dg").datagrid({
+     		  url:'../../kgyxbinfo/getObjectList',
+    		  queryParams:queryParams,
+              fit:true,               //固定表头和底部的分页工具 
+              fitColumns:true,        //自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动
+              checkOnSelect: true,   //如果为false，当用户仅在点击该复选框的时候才会被选中或取消
+              rownumbers:true,        //显示行号  
+              loadMsg:'数据加载中...',  
+              pagination:true,        //是否显示分页工具  
+              pageSize:20,    
+              striped:true,           //是否显示斑马线效果
+              //selectOnCheck:false,    //如果为false，选择行将不选中复选框;如果为true，单击复选框将永远选择行
+              columns:columnsData,
+              toolbar:'#div_toolbar',
+           });
+ 
+     }
+     
+     
+     
+       //批量导入
+       function upKgy(){
+    	   $("#wu-exportExcel").dialog({
+				title: "批量导入",
+				modal : true,// 模拟弹出对话框，添加mask层，弹出后，背景变灰色
+				
+			});
+    	   $("#upkgy").replaceWith('<input id="upkgy" type="file" name="upkgy" multiple="true" class="upImgBtn"> ');
+    	  // document.getElementById("min_file").value="";
+		   $("#upKgyFileBtn").attr("onclick","loadKgyFile()");
+   	       $("#wu-exportExcel").dialog('open');
+    	   
+       }
+       
+       function loadKgyFile(){
+           if($("#upkgy")[0].files.length>0){
+           
+              $("#upKgyFileForm").form('submit', {
+                   type:"post",  //提交方式    
+                   url:$("#upKgyFileForm")[0].action, //请求url
+                   success:function(res)
+                   { //提交成功的回调函数   
+                	  // console.log(res);
+                	   var result=JSON.parse(res);
+                	
+                       if(result.status){
+                    	//search_bb();
+               	    	$.messager.alert("提示消息", result.msg, 'info');
+               	    	$("#dg").datagrid("reload");
+                    	   
+                       }else{
+                          $.messager.alert("提示消息", result.msg, 'info');
+                          $("#dg").datagrid("reload");
+                       }
+                       
+                       
+                   }    
+               }); 
+           }else{
+              $.messager.alert("提示消息", "请选择要批量导入的文件！", 'info');
+           }
+            
+             
+           }
+       
+
+
+	</script>
+  </body>
+  
+  
+</html>

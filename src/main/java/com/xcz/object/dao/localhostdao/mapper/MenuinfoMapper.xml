@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+ 
+<mapper namespace="com.xcz.object.dao.localhostdao.MenuinfoDao">
+    <resultMap id="BaseResultMap" type="com.xcz.object.model.Menuinfo">  
+        <result column="id" property="id"  jdbcType="INTEGER" />
+        <result column="text" property="text" />
+        <result column="pid" property="pid" />
+        <result column="iconCls" property="iconCls" />
+        <result column="state" property="state" />
+        <result column="url" property="url" />
+        <result column="checked" property="checked" />
+        <result column="num" property="num" />
+        <result column="isFb" property="isFb" />
+        <result column="create_time" property="create_time" />
+        <result column="url1" property="url1" />
+        <result column="maxImg" property="maxImg" />
+        <result column="menuType" property="menuType" />
+        <result column="rsv13" property="rsv13" />
+        <result column="rsv14" property="rsv14" />
+        <result column="rsv15" property="rsv15" />
+        <result column="rsv16" property="rsv16" />
+        <result column="rsv17" property="rsv17" />
+        <result column="rsv18" property="rsv18" />
+        <result column="rsv19" property="rsv19" />
+        <result column="rsv20" property="rsv20" />
+    </resultMap>  
+ 
+	<select id="getObjectList" parameterType="com.xcz.object.model.Menuinfo" resultMap="BaseResultMap">
+		 select m.id,m.text,m.pid,m.iconCls,m.state,m.url,m.checked,m.num,m.isFb,m.create_time,m.url1,m.maxImg ,m.menuType
+		 from menuinfo m
+		 <where>
+		    <if test="isFb != ''">
+                m.isFb=#{isFb}
+            </if>
+		 </where>
+		 order by (m.num+0)
+	</select>
+	
+	
+	
+	<select id="getObjectListByRole" parameterType="com.xcz.object.model.Menuinfo" resultMap="BaseResultMap">
+		
+		<!--  
+		 select * from menuinfo where pid in (
+             select id from menuinfo where id in(  select pid from roleuserinfo where text=#{text}  ) 
+         ) 
+         UNION ALL
+         -->
+         select * from menuinfo where id in( select mid from roleuserinfo where rid=#{text} )  order by (num+0)
+	</select>
+	
+	
+	
+	
+	
+	
+	<select id="getListByPid" parameterType="com.xcz.object.model.Menuinfo" resultMap="BaseResultMap">
+		 select m.id,m.text,m.pid,m.iconCls,m.state,m.url,m.checked,m.num,m.isFb,m.create_time,m.url1,m.maxImg ,m.menuType
+		 from menuinfo  m 
+		 where m.pid=#{pid}  order by (m.num+0)
+	</select>
+	
+	
+	
+	<select id="getMenuS" parameterType="com.xcz.object.model.Menuinfo" resultMap="BaseResultMap">
+		 select id,text from menuinfo where pid=#{pid}  order by (num+0)
+	</select>
+	
+
+    <select id="getObjectById" parameterType="com.xcz.object.model.Menuinfo" 
+                                   resultType="com.xcz.object.model.Menuinfo">
+		 select m.id,m.text as text,m.pid,m.iconCls,m.state,m.url,m.checked,m.num,m.isFb,m.create_time,m.url1,m.maxImg ,m.menuType
+		 from menuinfo  m  where m.id=#{id}
+	</select>
+	
+	
+	 <!--4 单笔新增 -->
+    <insert id="addObjectOnly" parameterType="com.xcz.object.model.Menuinfo" > 
+        
+        insert into menuinfo (
+        text,pid,iconCls,state,url,checked,num,isFb,create_time,url1,
+        maxImg,menuType,rsv13,rsv14,rsv15,rsv16,rsv17,rsv18,rsv19,rsv20
+        ) 
+        values(
+        #{text},#{pid},#{iconCls},#{state},#{url},
+        #{checked},#{num},#{isFb},#{create_time},#{url1},
+        #{maxImg},#{menuType},#{rsv13},#{rsv14},#{rsv15},
+        #{rsv16},#{rsv17},#{rsv18},#{rsv19},#{rsv15})  
+       
+    </insert>
+
+    <!--5 单笔修改 -->
+    <update id="updateObjectOnly" parameterType="com.xcz.object.model.Menuinfo" >
+        update menuinfo set 
+        text=#{text},pid=#{pid},iconCls=#{iconCls},state=#{state},url=#{url},
+        checked=#{checked},num=#{num},isFb=#{isFb},create_time=#{create_time},url1=#{url1},
+        maxImg=#{maxImg},menuType=#{menuType},rsv13=#{rsv13},rsv14=#{rsv14},rsv15=#{rsv15},
+        rsv16=#{rsv16},rsv17=#{rsv17},rsv18=#{rsv18},rsv19=#{rsv19},rsv20=#{rsv20}
+        where id=#{id}
+    </update>
+    
+    
+    
+    <!--6 单笔删除 -->
+    <delete id="deleteObjectOnly" parameterType="com.xcz.object.model.Menuinfo" >
+        delete from menuinfo where id=#{id}
+    </delete>
+    
+    <!--7 修改发布状态-->
+    <update id="updateIsFb" parameterType="com.xcz.object.model.Menuinfo" >
+        update menuinfo set isFb=#{isFb},create_time=#{create_time}
+        where id=#{id}
+    </update>
+     
+	
+</mapper>

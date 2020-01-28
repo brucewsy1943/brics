@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+  <head>
+    <title>用户管理</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!-- easyui标准引用 -->
+	<link rel="stylesheet" type="text/css" href="../../Source/easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../../Source/easyui/themes/theme-icon.css">
+	<script type="text/javascript" src="../../Source/easyui/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="../../Source/easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../../Source/easyui/locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="../../Source/js/tools.js"></script>
+	<script type="text/javascript" src="../../Source/js/datagrid.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="../../Source/css/icon.css"> 
+  </head>
+  <body>
+	<div id="dg" class="easyui-pagination" data-options="" style="border:1px solid #ddd;"></div>
+ 	<div id="div_toolbar" >  
+ 	                                                           
+    <a class="easyui-linkbutton" iconCls="icon-insert-new" plain="true" onclick="add('../../userinfo/addObjectOnly')">新增</a>
+	<a class="easyui-linkbutton" iconCls="icon-edit-new" plain="true" onclick="edit('../../userinfo/updateObjectOnly')">修改</a>
+	<a class="easyui-linkbutton" iconCls="icon-delet-new" plain="true" onclick="del('../../userinfo/deleteObjectOnly')">删除</a>
+	<a class="easyui-linkbutton" iconCls="icon-ref_btn" plain="true" onclick="ref()">刷新</a> 
+	<!--
+	<a class="easyui-linkbutton" iconCls="icon-import-new" plain="true" onclick="exportExcel()">导入</a> 
+	<a class="easyui-linkbutton" iconCls="icon-export-new" plain="true" onclick="exportExcel()">导出</a> 
+	<a class="easyui-linkbutton" iconCls="icon-issue-new" plain="true" onclick="exportExcel()">发布</a> 
+	<a class="easyui-linkbutton" iconCls="icon-repeal-new" plain="true" onclick="exportExcel()">撤销</a> 
+    -->
+    <div class="toolbar-search" style="padding-top: 5px;  " >
+               <input id="se_username" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入用户名'">
+               <input id="se_chinaname" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入中文名'">
+               <input id="se_email" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入邮箱'">
+               <input id="se_phone" class="easyui-textbox" style="width:100px" data-options="prompt:'请输入电话'">
+            <a class="easyui-linkbutton" iconCls="icon-search-new" onclick="search_bb()" style="background:#049ec4;color:#fff ">开始检索</a>
+        </div>
+</div>
+
+
+
+<div id="editDiv" class="easyui-dialog" style="width: 70%; padding: 10px 20px; height: 70%;display: none;"
+        closed="true" buttons="#dlg-buttons" >                         
+         
+        <form id="editForm"  method="post" style="margin-top: 20px; margin-left: 20px;">
+				<table cellpadding="5" style="font-size: 12px;width: 100%;">
+				    <tr>
+                        <td style="text-align: right">用户角色：</td>
+                        <td> <input type="text" id="rsv7" name="rsv7" class="easyui-combobox" 
+                               data-options="required:true,editable:false,url:'../../roleinfo/getRole', valueField:'id',textField:'text',
+                               method:'get',prompt:'--请选择角色--'" style="width:80%;height:40px;"/> </td>
+                    </tr>
+				    <tr>
+                        <td style="text-align: right">用户名：</td>
+                        <td><input style="width:80%;height:40px;" id="username" name="username" class="easyui-textbox" type="text" 
+                        data-options="required:true,editable:true,validType:'length[1,100]',prompt:'请输入用户名',"></input></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right">密码：</td>
+                        <td><input style="width:80%;height:40px;" id="password" name="password" class="easyui-textbox" type="text" 
+                        data-options="required:true,editable:true,validType:'length[1,100]',prompt:'请输入密码'"></input></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="text-align: right">中文名称：</td>
+                        <td><input style="width:80%;height:40px;" id="chinaname" name="chinaname" class="easyui-textbox" type="text" 
+                        data-options="required:true,editable:true,validType:'length[1,500]',prompt:'请输入中文名称'"></input></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right">邮箱：</td>
+						<td><input style="width:80%;height:40px;" id="email" name="email" class="easyui-textbox" 
+						type="text" data-options="required:false,editable:true,validType:'length[1,50]',prompt:'请输入联系邮箱'" ></input></td>
+					</tr>
+                     <tr>
+                        <td style="text-align: right">电话：</td>
+						<td><input style="width:80%;height:40px;" id="phone" name="phone" class="easyui-textbox" 
+						type="text" data-options="required:false,editable:true,validType:'length[1,50]',prompt:'请输入联系电话'" ></input></td>
+					</tr>
+					<tr>
+                        <td style="text-align: right">备注：</td>
+						<td><input style="width:80%;height:80px;" id="rsv6" name="rsv6" class="easyui-textbox" 
+						type="text" data-options="required:false,editable:true,multiline:true,validType:'length[1,50]',prompt:'请输入联系电话'" ></input></td>
+					</tr>
+					
+                </table>
+            
+             <div id="dlg-buttons" style="display: block">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-ok" onclick="formsubmit()" style="width: 25%">提交</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#editDiv').dialog('close')" style="width: 25%">取消</a>
+            </div>
+        </form>
+    </div>
+    
+	<script type="text/javascript">
+        var editor1=null;
+    	var columnsData=[[
+                          {field:'checkbox',title:'checkbox',align:'center',checkbox:true},
+                          {field:'id',title:'id',align:'center',hidden:true},
+                          {field:'roleName',title:'用户角色',align:'center',width:30},
+                          {field:'username',title:'用户名',align:'center',width:30},
+                          {field:'password',title:'密码',align:'center',width:30},
+                          {field:'chinaname',title:'中文名',align:'center',width:30},
+                          {field:'email',title:'邮箱',align:'center',width:30},
+                          {field:'phone',title:'电话',align:'center',width:30}, 
+                          {field:'rsv6',title:'备注',align:'center',width:30},
+                          {field:'rsv20',title:'编辑时间',align:'center',width:30}
+                          ]];
+    	
+    	 var  queryParams={
+    			 "username":"",
+    			 "chinaname":"",
+ 			     "email":"",
+	   			 "phone":""};
+     	 $("#dg").datagrid({
+     		  url:'../../userinfo/getObjectList',
+     		  queryParams:queryParams,
+               fit:true,               //固定表头和底部的分页工具 
+               fitColumns:true,        //自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动
+               checkOnSelect: true,   //如果为false，当用户仅在点击该复选框的时候才会被选中或取消
+               rownumbers:true,        //显示行号  
+               loadMsg:'数据加载中...',  
+               pagination:true,        //是否显示分页工具  
+               pageSize:20,    
+               striped:true,           //是否显示斑马线效果
+               //selectOnCheck:false,    //如果为false，选择行将不选中复选框;如果为true，单击复选框将永远选择行
+               columns:columnsData,
+               toolbar:'#div_toolbar',
+            
+            });
+
+     function search_bb(){
+    	var username=$("#se_username").val();
+     	var chinaname=$("#se_chinaname").val();
+     	var email=$("#se_email").val();
+     	var phone=$("#se_phone").val();
+     	queryParams={
+     			     "username":username,
+     			     "chinaname":chinaname,
+     			     "email":email,
+		   			 "phone":phone};
+     	
+
+     	$("#dg").datagrid({
+     		  url:'../../userinfo/getObjectList',
+    		  queryParams:queryParams,
+              fit:true,               //固定表头和底部的分页工具 
+              fitColumns:true,        //自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动
+              checkOnSelect: true,   //如果为false，当用户仅在点击该复选框的时候才会被选中或取消
+              rownumbers:true,        //显示行号  
+              loadMsg:'数据加载中...',  
+              pagination:true,        //是否显示分页工具  
+              pageSize:20,    
+              striped:true,           //是否显示斑马线效果
+              //selectOnCheck:false,    //如果为false，选择行将不选中复选框;如果为true，单击复选框将永远选择行
+              columns:columnsData,
+              toolbar:'#div_toolbar',
+           });
+ 
+     }
+
+
+	</script>
+  </body>
+  
+  
+</html>

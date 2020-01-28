@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+ 
+<mapper namespace="com.xcz.object.dao.localhostdao.RoleuserinfoDao">
+    <resultMap id="BaseResultMap" type="com.xcz.object.model.Roleuserinfo">  
+        <result column="id" property="id"  jdbcType="INTEGER" />
+        <result column="rid" property="rid" />
+        <result column="mid" property="mid" />
+        <result column="pid" property="pid" />
+        <result column="rsv4" property="rsv4" />
+        <result column="rsv5" property="rsv5" />
+        <result column="rsv6" property="rsv6" />
+        <result column="rsv7" property="rsv7" />
+        <result column="rsv8" property="rsv8" />
+        <result column="rsv9" property="rsv9" />
+        <result column="rsv10" property="rsv10" />
+        <result column="rsv11" property="rsv11" />
+        <result column="rsv12" property="rsv12" />
+        <result column="rsv13" property="rsv13" />
+        <result column="rsv14" property="rsv14" />
+        <result column="rsv15" property="rsv15" />
+        <result column="rsv16" property="rsv16" />
+        <result column="rsv17" property="rsv17" />
+        <result column="rsv18" property="rsv18" />
+        <result column="rsv19" property="rsv19" />
+        <result column="rsv20" property="rsv20" />
+        <result column="mid" property="mid" />
+        <result column="text" property="text" />
+        
+        <result column="roleName" property="roleName" />
+        
+    </resultMap>  
+ 
+	<select id="getListByPid" parameterType="com.xcz.object.model.Roleuserinfo" 
+	                           resultMap="BaseResultMap">
+		 select ru.id, r.roleName as roleName,m.id as mid,m.text as text, m.pid as pid ,ru.rsv20 from roleuserinfo ru,roleinfo r,menuinfo m where 
+
+         ru.rid=r.id and ru.mid=m.id and ru.rid=#{rid} and ru.pid=#{pid} order by (m.num+0)
+	</select>
+	
+	
+	<select id="getObjectList" parameterType="com.xcz.object.model.Roleuserinfo" 
+	                           resultMap="BaseResultMap">
+		 select ru.id, r.roleName as roleName,m.id as mid,m.text as text, m.pid as pid ,ru.rsv20 from roleuserinfo ru,roleinfo r,menuinfo m where 
+
+         ru.rid=r.id and ru.mid=m.id and ru.rid=#{rid} order by (m.num+0)
+	</select>
+	
+	
+	<select id="getObjectByRoleuser" parameterType="com.xcz.object.model.Roleuserinfo" 
+	                             resultMap="BaseResultMap">
+		select id,mid from roleuserinfo 
+		
+	</select>
+	
+	
+	 <!--4 单笔新增 -->
+    <insert id="addObjectOnly" parameterType="com.xcz.object.model.Roleuserinfo" > 
+        
+        insert into roleuserinfo (
+        rid,mid,pid,rsv4,rsv5,rsv6,rsv7,rsv8,rsv9,rsv10,
+        rsv11,rsv12,rsv13,rsv14,rsv15,rsv16,rsv17,rsv18,rsv19,rsv20
+        ) 
+        values(
+        #{rid},#{mid},#{pid},#{rsv4},#{rsv5},
+        #{rsv6},#{rsv7},#{rsv8},#{rsv9},#{rsv10},
+        #{rsv11},#{rsv12},#{rsv13},#{rsv14},#{rsv15},
+        #{rsv16},#{rsv17},#{rsv18},#{rsv19},#{rsv20})  
+       
+    </insert>
+
+    <!--5 单笔修改 -->
+    <update id="updateObjectOnly" parameterType="com.xcz.object.model.Roleuserinfo" >
+        update roleuserinfo set 
+        rid=#{rid},mid=#{mid},pid=#{pid},rsv4=#{rsv4},rsv5=#{rsv5},
+        rsv6=#{rsv6},rsv7=#{rsv7},rsv8=#{rsv8},rsv9=#{rsv9},rsv10=#{rsv10},
+        rsv11=#{rsv11},rsv12=#{rsv12},rsv13=#{rsv13},rsv14=#{rsv14},rsv15=#{rsv15},
+        rsv16=#{rsv16},rsv17=#{rsv17},rsv18=#{rsv18},rsv19=#{rsv19},rsv20=#{rsv20}
+        where id=#{id}
+    </update>
+    
+    
+     <!--6 多条删除 -->
+    <delete id="deleteObjectByrole" parameterType="com.xcz.object.model.Roleuserinfo" >
+        delete from roleuserinfo where mid=#{id}
+    </delete>
+    
+    <!--6 单笔删除 -->
+    <delete id="deleteObjectOnly" parameterType="com.xcz.object.model.Roleuserinfo" >
+        delete from roleuserinfo where id=#{id}
+    </delete>
+     
+	
+</mapper>
